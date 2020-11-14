@@ -462,6 +462,53 @@ def doctor_update():
         return render_template("doctor_update.html", msg = msg)
     return redirect(url_for('doctor_login'))
 
+@app.route("/rec_appointment",methods=['GET','POST'])
+def rec_appointment():
+    if 'loggedin' in session:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM appointment WHERE date_appointment = % s', (temp1, ))
+        appointment=cursor.fetchall()
+        return render_template("rec_appointment.html", appointment=appointment)
+    return redirect(url_for('home'))
+
+@app.route("/pre_rec_appointment",methods=['GET','POST'])
+def pre_rec_appointment():
+    msg=" "
+    if 'loggedin' in session:
+        if request.method=="POST" and 'date_appointment' in request.form:
+            conn=mysql.connect
+            cursor=conn.cursor()
+            date_appointment=request.form['date_appointment']
+            temp1=date_appointment
+            return redirect(url_for('rec_appointment'))
+        else:
+            return render_template("pre_rec_appointment.html",msg=msg)
+    return render_template('receptionist_index.html')
+
+@app.route("/doc_appointment",methods=['GET','POST'])
+
+def doc_appointment():
+    if 'loggedin' in session:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM appointment WHERE doctor_id = % s AND date_appointment=% s', (session['doctor_id'],temp1, ))
+        appointment=cursor.fetchall()
+        return render_template("doc_appointment.html", appointment=appointment)
+    return redirect(url_for('home'))
+
+@app.route("/pre_doc_appointment",methods=['GET','POST'])
+
+def pre_doc_appointment():
+    msg=" "
+    if 'loggedin' in session:
+        if request.method=="POST" and 'date_appointment' in request.form:
+            conn=mysql.connect
+            cursor=conn.cursor()
+            date_appointment=request.form['date_appointment']
+            temp1=date_appointment
+            return redirect(url_for('doc_appointment'))
+        else:
+            return render_template("pre_doc_appointment.html",msg=msg)
+    return render_template('doctor_index.html')
 
 if __name__ == "__main__":
     app.debug=True
